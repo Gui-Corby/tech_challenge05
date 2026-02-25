@@ -1,36 +1,38 @@
 import pandas as pd
 import numpy as np
-from config import NUMERIC_FEATURES, TARGET_COL
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from config import NUMERIC_FEATURES
 
 
-def select_features(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
-    feats = [f for f in NUMERIC_FEATURES if f in df.columns]
-    missing = set(NUMERIC_FEATURES) - set(df.columns)
-    if missing:
-        print("Features ausentes:", missing)
-    X = df[feats].copy()
-    y = df[TARGET_COL].copy()
-    return X, y
-
-
-def filter_age(df: pd.DataFrame) -> pd.DataFrame:
+def filter_age(df: pd.DataFrame, max_age: int = 19) -> pd.DataFrame:
     df = df.copy()
-    return df[(df["Idade"] <= 19)]
+    if "Idade" not in df.columns:
+        return df
+    return df[df["Idade"] <= max_age]
 
 
-def treat_missing_values(df: pd.DataFrame, numeric_features: list[str]) -> pd.DataFrame:
+def replace_infs(df: pd.DataFrame, numeric_features: list[str]) -> pd.DataFrame:
     df = df.copy()
-
     for col in numeric_features:
-        if col not in df.columns:
-            continue
-
-        if df[col].isna().any():
-            median_val = df[col].median()
-            if pd.isna(median_val):  # Se mediana for NaN, usar 0
-                median_val = 0
-            df[col] = df[col].fillna(median_val)
-
-        df[col] = df[col].replace([np.inf, -np.inf], 0)
-
+        if col in df.columns:
+            df[col] = df[col].replace([np.inf, -np.inf], np.nan)
     return df
+
+
+def make_preprocessor(df: pd.DataFrame) -> ColumnTransformer:
+    feats = [f for f in NUMERIC_FEATURES if f in df.columns]
+
+    numeric_pipe = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+    ])
+
+    return ColumnTransformer(
+        transformers=[("num", numeric_pipe, feats)],
+        remainder="drop",
+        verbose_feature_names_out=False,
+    )
