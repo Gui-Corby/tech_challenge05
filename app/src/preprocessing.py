@@ -36,3 +36,19 @@ def make_preprocessor(df: pd.DataFrame) -> ColumnTransformer:
         remainder="drop",
         verbose_feature_names_out=False,
     )
+
+
+def check_all_nan_columns(df: pd.DataFrame, 
+                          numeric_features: list[str]) -> list[str]:
+    """
+    Retorna lista de colunas que estão 100% Nan
+    """
+
+    all_nan_cols = []
+
+    for col in numeric_features:
+        if col in df.columns:
+            if df[col].isna().all():
+                all_nan_cols.append(col)
+
+    return all_nan_cols

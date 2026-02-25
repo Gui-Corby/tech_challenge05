@@ -6,13 +6,19 @@ from sklearn.model_selection import train_test_split
 
 from config import DF_2024, NUMERIC_FEATURES, TARGET_COL
 from feature_engineering import build_features_2024
-from preprocessing import filter_age, replace_infs, make_preprocessor
+from preprocessing import filter_age, replace_infs, make_preprocessor, check_all_nan_columns
 
 df = build_features_2024(DF_2024).copy()
 
 # Limpeza fora do sklearn
 df = filter_age(df, max_age=19)
 df = replace_infs(df, NUMERIC_FEATURES)
+
+nan_cols = check_all_nan_columns(df, NUMERIC_FEATURES)
+
+if nan_cols:
+    print("Removendo:", nan_cols)
+    df = df.drop(columns=nan_cols)
 
 X = df.drop(columns=[TARGET_COL])
 y = df[TARGET_COL].dropna()
