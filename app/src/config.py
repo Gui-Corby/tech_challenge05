@@ -1,8 +1,8 @@
 import pandas as pd
+from pathlib import Path
 
-DF_2022 = pd.read_excel("data/excel_file.xlsx", sheet_name="PEDE2022")
-DF_2023 = pd.read_excel("data/excel_file.xlsx", sheet_name='PEDE2023')
-DF_2024 = pd.read_excel("data/excel_file.xlsx", sheet_name="PEDE2024")
+BASE_DIR = Path(__file__).resolve().parents[1]
+DF_2024 = pd.read_excel(BASE_DIR / "data" / "excel_file.xlsx", sheet_name="PEDE2024")
 
 TARGET_COL = "Defasagem"
 

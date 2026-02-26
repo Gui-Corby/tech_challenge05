@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from config import NUMERIC_FEATURES
@@ -25,6 +24,8 @@ def replace_infs(df: pd.DataFrame, numeric_features: list[str]) -> pd.DataFrame:
 
 def make_preprocessor(df: pd.DataFrame) -> ColumnTransformer:
     feats = [f for f in NUMERIC_FEATURES if f in df.columns]
+    if not feats:
+        raise ValueError("make_preprocessor: nenhuma NUMERIC_FEATURE encontrada no dataframe")
 
     numeric_pipe = Pipeline(steps=[
         ("imputer", SimpleImputer(strategy="median")),
@@ -38,10 +39,10 @@ def make_preprocessor(df: pd.DataFrame) -> ColumnTransformer:
     )
 
 
-def check_all_nan_columns(df: pd.DataFrame, 
+def check_all_nan_columns(df: pd.DataFrame,
                           numeric_features: list[str]) -> list[str]:
     """
-    Retorna lista de colunas que estão 100% Nan
+    Retorna lista de colunas que estão 100% NaN
     """
 
     all_nan_cols = []
@@ -51,4 +52,4 @@ def check_all_nan_columns(df: pd.DataFrame,
             if df[col].isna().all():
                 all_nan_cols.append(col)
 
-    return all_nan_cols
+    return sorted(all_nan_cols)

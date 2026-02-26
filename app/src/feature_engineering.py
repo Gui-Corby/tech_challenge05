@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config import DF_2024
+# from config import DF_2024
 
 
 # -------------------------
@@ -51,7 +51,8 @@ def create_temp_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_academic_features(df: pd.DataFrame) -> pd.DataFrame:
-    _require_cols(df, ["Mat", "Por", "Ing", "Pedra 2024", "Pedra 23"],
+    _require_cols(df, ["Mat", "Por", "Ing", "Pedra 2024", "Pedra 23",
+                       "Pedra 22", "Pedra 21"],
                   "create_academic_features")
     df = df.copy()
 
@@ -62,6 +63,8 @@ def create_academic_features(df: pd.DataFrame) -> pd.DataFrame:
     pedra_ordem = {"Quartzo": 1, "Ágata": 2, "Ametista": 3, "Topázio": 4}
     df["Pedra_2024_num"] = df["Pedra 2024"].map(pedra_ordem)
     df["Pedra_2023_num"] = df["Pedra 23"].map(pedra_ordem)
+    df["Pedra_2022_num"] = df["Pedra 22"].map(pedra_ordem)
+    df["Pedra_2021_num"] = df["Pedra 21"].map(pedra_ordem)
 
     return df
 
@@ -87,7 +90,7 @@ def temp_evol_features(df: pd.DataFrame) -> pd.DataFrame:
     df["Evolucao_INDE_22_23"] = df["INDE 23"] - df["INDE 22"]
 
     # Taxa de evolução (percentual)
-    df["Taxa_Evolução_INDE_23_24"] = ((df["INDE 2024"] - df["INDE 23"]) / (df["INDE 23"] + 0.001)) * 100
+    df["Taxa_Evolucao_INDE_23_24"] = ((df["INDE 2024"] - df["INDE 23"]) / (df["INDE 23"] + 0.001)) * 100
 
     return df
 
@@ -148,9 +151,12 @@ def binary_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def future_improvements_features(df: pd.DataFrame) -> pd.DataFrame:
+    _require_cols(df, ["Evolucao_Pedra_23_24", "Evolucao_Pedra_22_23"],
+                  "future_improvements_features")
+    df = df.copy()
     df["Tendencia_Melhora"] = (
-        (df["Evolução_Pedra_23_24"].fillna(0) > 0).astype(int) +
-        (df["Evolução_Pedra_22_23"].fillna(0) > 0).astype(int)
+        (df["Evolucao_Pedra_23_24"].fillna(0) > 0).astype(int) +
+        (df["Evolucao_Pedra_22_23"].fillna(0) > 0).astype(int)
     )
 
     return df
@@ -184,10 +190,3 @@ def build_features_2024(df: pd.DataFrame) -> pd.DataFrame:
     df = consistency_features(df)
 
     return df
-
-
-def build_df_2024_featured() -> pd.DataFrame:
-    """
-    Conveniência: aplica o pipeline no DF_2024 do config e devolve um df novo.
-    """
-    return build_features_2024(DF_2024)
