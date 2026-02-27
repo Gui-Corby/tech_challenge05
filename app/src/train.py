@@ -27,12 +27,6 @@ from config import (
     DATA_PATH
 )
 
-print("DATA_PATH =", DATA_PATH)
-print("DF_2024 shape =", DF_2024.shape)
-print("DF_2024 columns sample =", list(DF_2024.columns)[:15])
-print("dtypes INDE:", DF_2024[["INDE 2024", "INDE 23", "INDE 22"]].dtypes)
-print("head INDE:\n", DF_2024[["INDE 2024", "INDE 23", "INDE 22"]].head())
-
 from feature_engineering import build_features_2024
 from preprocessing import filter_age, replace_infs, make_preprocessor, check_all_nan_columns
 
