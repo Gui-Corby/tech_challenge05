@@ -7,7 +7,14 @@ import joblib
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    classification_report,
+    confusion_matrix,
+    mean_absolute_error,
+    cohen_kappa_score
+)
 
 from config import (
     DF_2024,
@@ -32,8 +39,9 @@ def main() -> None:
 
     nan_cols = check_all_nan_columns(df, NUMERIC_FEATURES)
     if nan_cols:
-        print("Removendo colunas 100% NaN:", nan_cols)
-        df = df.drop(columns=nan_cols)
+        print("Colunas 100% NaN -> preenchendo com 0:", nan_cols)
+        for col in nan_cols:
+            df[col] = 0
 
     # 2) X/y
     X = df.drop(columns=[TARGET_COL]).copy()
@@ -46,6 +54,7 @@ def main() -> None:
             X, y, test_size=0.2, random_state=42, stratify=y
         )
         used_stratify = True
+
     except ValueError:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=None
@@ -61,7 +70,6 @@ def main() -> None:
             max_iter=1000,
             class_weight="balanced",
             random_state=42,
-            multi_class="multinomial",
             solver="lbfgs",
         )),
     ])
@@ -79,6 +87,8 @@ def main() -> None:
         "accuracy": float(accuracy_score(y_test, pred)),
         "f1_macro": float(f1_score(y_test, pred, average="macro")),
         "f1_weighted": float(f1_score(y_test, pred, average="weighted")),
+        "mae": float(mean_absolute_error(y_test, pred)),
+        "kappa": float(cohen_kappa_score(y_test, pred)),
         "confusion_matrix": confusion_matrix(y_test, pred).tolist(),
     }
 
@@ -97,9 +107,9 @@ def main() -> None:
     test_df[TARGET_COL] = y_test
     test_df.to_csv(TEST_PATH, index=False)
 
-    print(f"\n✅ Modelo salvo em: {MODEL_PATH}")
-    print(f"✅ Métricas salvas em: {METRICS_PATH}")
-    print(f"✅ Test set salvo em: {TEST_PATH}")
+    print(f"\nModelo salvo em: {MODEL_PATH}")
+    print(f"Métricas salvas em: {METRICS_PATH}")
+    print(f"Test set salvo em: {TEST_PATH}")
 
 
 if __name__ == "__main__":
