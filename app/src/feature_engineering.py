@@ -17,10 +17,8 @@ def _to_float_ptbr(series: pd.Series) -> pd.Series:
     Converte strings numéricas no formato pt-BR (vírgula decimal) para float.
     Mantém NaN quando não der pra converter.
     """
-    if series.dtype == "object":
-        return pd.to_numeric(series.astype(str).str.replace(",", "."),
-                             errors="coerce")
-    return series
+    s = series.copy()
+    return pd.to_numeric(s.astype(str).str.replace(",", "."), errors="coerce")
 
 
 def extrair_numero_fase(fase) -> float:
@@ -38,6 +36,32 @@ def extrair_numero_fase(fase) -> float:
     except Exception:
         return np.nan
 
+
+def _sanitize_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Converte para float as colunas numéricas esperadas quando os dados vêm como string (ex: '10,0').
+    Faz também correção de 'Ano ingresso' e garante que os INDEs estejam como float.
+    """
+    df = df.copy()
+
+    # colunas que frequentemente vêm como texto no export do Excel/CSV (pt-BR)
+    numeric_like_cols = [
+        "Mat", "Por", "Ing",
+        "IAN", "IDA", "IEG", "IPV", "IPS", "IPP", "IAA",
+        "INDE 2024", "INDE 23", "INDE 22",
+        "Idade", "Ano ingresso",
+        "Nº Av",
+    ]
+
+    for col in numeric_like_cols:
+        if col in df.columns:
+            df[col] = _to_float_ptbr(df[col])
+
+    # Ano ingresso faz sentido como inteiro (mas pode ficar float por causa de NaN)
+    if "Ano ingresso" in df.columns:
+        df["Ano ingresso"] = pd.to_numeric(df["Ano ingresso"], errors="coerce")
+
+    return df
 
 # -------------------------
 # Feature blocks
@@ -182,6 +206,8 @@ def build_features_2024(df: pd.DataFrame) -> pd.DataFrame:
     Pipeline único que garante a ordem das features.
     """
     df = df.copy()
+
+    df = _sanitize_numeric_columns(df)
 
     df = create_temp_features(df)
     df = create_academic_features(df)

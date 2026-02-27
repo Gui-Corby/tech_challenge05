@@ -24,7 +24,7 @@ def test_build_features_creates_expected_columns(df_minimo):
         "Pedra_2021_num",
         "Evolucao_Pedra_23_24",
         "Evolucao_INDE_23_24",
-        "Taxa_Evolução_INDE_23_24",
+        "Taxa_Evolucao_INDE_23_24",
         "Fase_num",
         "Fase_Ideal_num",
         "Deficit_Fase",

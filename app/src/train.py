@@ -42,6 +42,7 @@ def main() -> None:
 
     # 1) Feature engineering + limpezas fora do sklearn
     df = build_features_2024(DF_2024).copy()
+
     df = filter_age(df, max_age=19)
     df = replace_infs(df, NUMERIC_FEATURES)
 
