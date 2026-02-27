@@ -1,8 +1,17 @@
 import pandas as pd
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-DF_2024 = pd.read_excel(BASE_DIR / "data" / "excel_file.xlsx", sheet_name="PEDE2024")
+# Caminhos
+BASE_DIR = Path(__file__).resolve().parents[2]
+DATA_PATH = BASE_DIR / "data" / "excel_file.xlsx"
+ARTIFACTS_DIR = BASE_DIR / "artifacts"
+
+MODEL_PATH = ARTIFACTS_DIR / "pipeline.joblib"
+METRICS_PATH = ARTIFACTS_DIR / "metrics.json"
+TEST_PATH = ARTIFACTS_DIR / "test.csv"
+
+# Dataset
+DF_2024 = pd.read_excel(DATA_PATH, sheet_name="PEDE2024")
 
 TARGET_COL = "Defasagem"
 
