@@ -7,7 +7,7 @@ def df_minimo():
     # DataFrame mínimo que satisfaz todos os _require_cols do ipeline
     return pd.DataFrame({
         # create_temp_features
-        "Ano ingresso": [2022, 2023, 2021, 2020],
+        "Ano ingresso": ["2022", "2023", "2021", "2020"],
         "Idade": [15, 16, 17, 18],
 
         # create_academic_features + consistency_features
@@ -21,7 +21,7 @@ def df_minimo():
 
         # temp_evol_features
         "INDE 2024": ["7,5", "8,0", "7,0", "8,5"],  # pt-BR com vírgula
-        "INDE 23": [7.0, 7.5, 6.8, 8.0],
+        "INDE 23": ["7.0", "7.5", "6.8", "8.0"],
         "INDE 22": [6.5, 7.0, 6.6, 7.8],
 
         # level_features

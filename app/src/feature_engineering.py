@@ -45,6 +45,8 @@ def extrair_numero_fase(fase) -> float:
 def create_temp_features(df: pd.DataFrame) -> pd.DataFrame:
     _require_cols(df, ["Ano ingresso", "Idade"], "create_temp_features")
     df = df.copy()
+
+    df["Ano ingresso"] = pd.to_numeric(df["Ano ingresso"], errors="coerce")
     df["Tempo_na_PM"] = 2024 - df["Ano ingresso"]
     df["Idade_Ingresso"] = df["Idade"] - df["Tempo_na_PM"]
     return df
@@ -85,6 +87,8 @@ def temp_evol_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # Evolução do INDE (normaliza se vier como string)
     df["INDE 2024"] = _to_float_ptbr(df["INDE 2024"])
+    df["INDE 23"] = _to_float_ptbr(df["INDE 23"])
+    df["INDE 22"] = _to_float_ptbr(df["INDE 22"])
 
     df["Evolucao_INDE_23_24"] = df["INDE 2024"] - df["INDE 23"]
     df["Evolucao_INDE_22_23"] = df["INDE 23"] - df["INDE 22"]

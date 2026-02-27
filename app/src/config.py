@@ -3,7 +3,7 @@ from pathlib import Path
 
 # Caminhos
 BASE_DIR = Path(__file__).resolve().parents[2]
-DATA_PATH = BASE_DIR / "data" / "excel_file.xlsx"
+DATA_PATH = BASE_DIR / "data" / "data2024.csv"
 ARTIFACTS_DIR = BASE_DIR / "artifacts"
 
 MODEL_PATH = ARTIFACTS_DIR / "pipeline.joblib"
@@ -11,7 +11,8 @@ METRICS_PATH = ARTIFACTS_DIR / "metrics.json"
 TEST_PATH = ARTIFACTS_DIR / "test.csv"
 
 # Dataset
-DF_2024 = pd.read_excel(DATA_PATH, sheet_name="PEDE2024")
+# DF_2024 = pd.read_excel(DATA_PATH, sheet_name="PEDE2024")
+DF_2024 = pd.read_csv(DATA_PATH)
 
 TARGET_COL = "Defasagem"
 
