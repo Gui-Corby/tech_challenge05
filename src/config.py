@@ -24,6 +24,6 @@ NUMERIC_FEATURES = [
     "Deficit_Fase", "INDE_x_IAN", "IDA_x_IEG", "Media_Notas_x_IAN",
     "Evolucao_Pedra_23_24", "Evolucao_INDE_23_24", "Taxa_Evolucao_INDE_23_24",
     "Media_Indicadores_Psico", "Media_Indicadores_Desemp",
-    "Tendencia_Melhora", "Nº Av",
+    "Tendencia_Melhora", "N_Av",
     "Genero_bin", "Tem_Ingles", "Veterano",
 ]
