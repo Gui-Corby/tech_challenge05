@@ -1,63 +1,58 @@
 from __future__ import annotations
 
 import json
-
 import joblib
+import pandas as pd
 
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    classification_report,
-    confusion_matrix,
-    mean_absolute_error,
-    cohen_kappa_score
+    accuracy_score, f1_score, classification_report,
+    confusion_matrix, mean_absolute_error, cohen_kappa_score
 )
 
 from config import (
-    DF_2024,
-    NUMERIC_FEATURES,
-    TARGET_COL,
-    ARTIFACTS_DIR,
-    MODEL_PATH,
-    METRICS_PATH,
-    TEST_PATH,
-    DATA_PATH
+    DF_2024, NUMERIC_FEATURES, TARGET_COL,
+    ARTIFACTS_DIR, MODEL_PATH, METRICS_PATH, TEST_PATH
 )
 
 from feature_engineering import build_features_2024
 from preprocessing import filter_age, replace_infs, make_preprocessor, check_all_nan_columns
 
 
-def main() -> None:
-    ARTIFACTS_DIR.mkdir(exist_ok=True)
-
-    # 1) Feature engineering + limpezas fora do sklearn
-    df = build_features_2024(DF_2024).copy()
+def feature_engineering_block(df: pd.DataFrame) -> pd.DataFrame:
+    """Mesma lógica do treino anterior, só que encapsulada."""
+    df = build_features_2024(df).copy()
 
     df = filter_age(df, max_age=19)
     df = replace_infs(df, NUMERIC_FEATURES)
 
     nan_cols = check_all_nan_columns(df, NUMERIC_FEATURES)
-    if nan_cols:
-        print("Colunas 100% NaN -> preenchendo com 0:", nan_cols)
-        for col in nan_cols:
-            df[col] = 0
+    for col in nan_cols:
+        df[col] = 0
 
-    # 2) X/y
-    X = df.drop(columns=[TARGET_COL]).copy()
-    y = df[TARGET_COL].copy().dropna()
+    return df
+
+
+def main() -> None:
+    ARTIFACTS_DIR.mkdir(exist_ok=True)
+
+    # 1) X/y bruto (sem feature engineering aqui)
+
+    df_raw = DF_2024.copy()
+    y = df_raw[TARGET_COL].copy().dropna()
+    X = df_raw.drop(columns=[TARGET_COL]).copy()
     X = X.loc[y.index]
 
-    # 3) Split (tenta estratificar; se falhar, cai pra None)
+    # 2) Split
+
     try:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y
         )
         used_stratify = True
-
     except ValueError:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=None
@@ -66,9 +61,20 @@ def main() -> None:
 
     print(f"Split: train={len(X_train)} test={len(X_test)} | stratify={'y' if used_stratify else 'None'}")
 
-    # 4) Pipeline completo (preprocess + modelo)
+    # 3) Feature engineering transformer
+
+    fe = FunctionTransformer(feature_engineering_block, validate=False)
+
+    # "Enxerga" as colunas finais para montar o preprocessor exatamente como antes
+    X_train_fe = fe.fit_transform(X_train)
+
+    preprocess = make_preprocessor(X_train_fe)  # usa NUMERIC_FEATURES presentes
+
+    # 4) Pipeline end-to-end
+
     pipeline = Pipeline(steps=[
-        ("preprocess", make_preprocessor(X_train)),
+        ("feature_engineering", fe),
+        ("preprocess", preprocess),
         ("model", LogisticRegression(
             max_iter=1000,
             class_weight="balanced",
@@ -77,10 +83,9 @@ def main() -> None:
         )),
     ])
 
-    # 5) Treino
-    pipeline.fit(X_train, y_train)
+    # 5) Treino + validação
 
-    # 6) Validação holdout
+    pipeline.fit(X_train, y_train)
     pred = pipeline.predict(X_test)
 
     metrics = {
@@ -100,7 +105,8 @@ def main() -> None:
     print("\n=== Metrics (principal: f1_macro) ===")
     print(json.dumps(metrics, ensure_ascii=False, indent=2))
 
-    # 7) Salvar artifacts
+    # 6) Salvar artifacts
+
     joblib.dump(pipeline, MODEL_PATH)
 
     with open(METRICS_PATH, "w", encoding="utf-8") as f:
