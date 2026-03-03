@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from preprocessing import filter_age, replace_infs, make_preprocessor
+from src.preprocessing import filter_age, replace_infs, make_preprocessor
+from src.feature_engineering import build_features_2024
 
 
 def test_filter_age_caps_max_age():
@@ -19,7 +20,6 @@ def test_replace_infs_turns_into_nan():
 
 def test_make_preprocessor_fit_transform(df_minimo):
     # Cria features primeiro porque o preprocessor seleciona NUMERIC_FEATURES
-    from feature_engineering import build_features_2024
     df = build_features_2024(df_minimo)
 
     X = df.drop(columns=["Defasagem"])

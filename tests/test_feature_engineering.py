@@ -1,6 +1,6 @@
 import numpy as np
 
-from feature_engineering import build_features_2024, extrair_numero_fase
+from src.feature_engineering import build_features_2024, extrair_numero_fase
 
 
 def test_extrair_numero_fase():

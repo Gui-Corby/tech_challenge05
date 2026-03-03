@@ -11,7 +11,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-from config import MODEL_PATH, TEST_PATH, TARGET_COL, ARTIFACTS_DIR
+from src.config import MODEL_PATH, TEST_PATH, TARGET_COL, ARTIFACTS_DIR
 
 
 EVAL_METRICS_PATH = ARTIFACTS_DIR / "metrics_eval.json"

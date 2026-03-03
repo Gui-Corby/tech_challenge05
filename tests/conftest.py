@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def df_minimo():
-    # DataFrame mínimo que satisfaz todos os _require_cols do ipeline
+    # DataFrame mínimo que satisfaz todos os _require_cols do pipeline
     return pd.DataFrame({
         # create_temp_features
         "Ano ingresso": ["2022", "2023", "2021", "2020"],

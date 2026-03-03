@@ -1,8 +1,8 @@
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 
-from feature_engineering import build_features_2024
-from preprocessing import make_preprocessor
+from src.feature_engineering import build_features_2024
+from src.preprocessing import make_preprocessor
 
 
 def test_full_pipeline_fit_predict_smoke(df_minimo):
