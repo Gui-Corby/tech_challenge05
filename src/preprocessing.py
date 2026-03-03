@@ -4,7 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
-from config import NUMERIC_FEATURES
+from src.config import NUMERIC_FEATURES
 
 
 def filter_age(df: pd.DataFrame, max_age: int = 19) -> pd.DataFrame:

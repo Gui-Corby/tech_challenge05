@@ -7,9 +7,9 @@ import joblib
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from config import MODEL_PATH
+from src.config import MODEL_PATH
 
-router = APIRouter(prefix="/api", tags=["predict"])
+router = APIRouter(tags=["predict"])
 
 try:
     pipeline = joblib.load(MODEL_PATH)

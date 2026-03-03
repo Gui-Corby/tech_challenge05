@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 # Caminhos
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "data2024.csv"
 ARTIFACTS_DIR = BASE_DIR / "artifacts"
 

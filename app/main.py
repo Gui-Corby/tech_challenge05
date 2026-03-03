@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from predict import router as predict_router
+from app.predict import router as predict_router
 
-from monitoring.middleware import MetricsMiddleware
-from monitoring.routes import router as metrics_router
+from app.monitoring.middleware import MetricsMiddleware
+from app.monitoring.routes import router as metrics_router
 
 app = FastAPI(
     title="Passos Mágicos API",
@@ -15,6 +15,6 @@ app.include_router(metrics_router)
 
 @app.get("/")
 async def root():
-    return {"message: API is running!"}
+    return {"message": "API is running!"}
 
 app.include_router(predict_router)

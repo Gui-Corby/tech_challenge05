@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import joblib
-import pandas as pd
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
@@ -13,27 +12,13 @@ from sklearn.metrics import (
     confusion_matrix, mean_absolute_error, cohen_kappa_score
 )
 
-from config import (
-    DF_2024, NUMERIC_FEATURES, TARGET_COL,
+from src.config import (
+    DF_2024, TARGET_COL,
     ARTIFACTS_DIR, MODEL_PATH, METRICS_PATH, TEST_PATH
 )
 
-from feature_engineering import build_features_2024
-from preprocessing import filter_age, replace_infs, make_preprocessor, check_all_nan_columns
-
-
-def feature_engineering_block(df: pd.DataFrame) -> pd.DataFrame:
-    """Mesma lógica do treino anterior, só que encapsulada."""
-    df = build_features_2024(df).copy()
-
-    df = filter_age(df, max_age=19)
-    df = replace_infs(df, NUMERIC_FEATURES)
-
-    nan_cols = check_all_nan_columns(df, NUMERIC_FEATURES)
-    for col in nan_cols:
-        df[col] = 0
-
-    return df
+from src.preprocessing import filter_age, make_preprocessor
+from src.ml_pipeline import feature_engineering_block
 
 
 def main() -> None:
@@ -42,6 +27,8 @@ def main() -> None:
     # 1) X/y bruto (sem feature engineering aqui)
 
     df_raw = DF_2024.copy()
+    df_raw = filter_age(df_raw, max_age=19)
+
     y = df_raw[TARGET_COL].copy().dropna()
     X = df_raw.drop(columns=[TARGET_COL]).copy()
     X = X.loc[y.index]
