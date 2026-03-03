@@ -13,11 +13,17 @@ NUMERIC_FEATURES = [
 
 
 def calculate_psi(expected, actual, bins=10):
-    expected_perc, _ = np.histogram(expected, bins=bins)
-    actual_perc, _ = np.histogram(actual, bins=bins)
+    expected = np.asarray(expected)
+    actual = np.asarray(actual)
 
-    expected_perc = expected_perc / len(expected)
-    actual_perc = actual_perc / len(actual)
+    # bins definidos pelo expected (baseline)
+    _, bin_edges = np.histogram(expected, bins=bins)
+
+    expected_counts, _ = np.histogram(expected, bins=bin_edges)
+    actual_counts, _ = np.histogram(actual, bins=bin_edges)
+
+    expected_perc = expected_counts / max(len(expected), 1)
+    actual_perc = actual_counts / max(len(actual), 1)
 
     psi = np.sum((actual_perc - expected_perc) *
                  np.log((actual_perc + 1e-6) / (expected_perc + 1e-6)))
