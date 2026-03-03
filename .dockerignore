@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.coverage
+.ipynb_checkpoints/
+.git/
+.vscode/
+.DS_Store
+tests/
+notebook.ipynb
