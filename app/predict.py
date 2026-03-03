@@ -11,6 +11,8 @@ from src.config import MODEL_PATH
 
 from app.inference_logger import log_inference
 
+from src.drift_monitor import compute_drift
+
 router = APIRouter(tags=["predict"])
 
 try:
@@ -121,3 +123,8 @@ def predict(req: PredictRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao prever: {repr(e)}")
+
+
+@router.get("/drift")
+def drift():
+    return compute_drift()
