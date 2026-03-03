@@ -1,4 +1,3 @@
-# Tech Challenge 05 --- Machine Learning Engineering
 
 ## Overview
 
@@ -12,7 +11,7 @@ The system follows production-oriented best practices, including:
 -   REST API for real-time inference (FastAPI)
 -   Monitoring integration with Prometheus
 -   Drift detection using PSI (Population Stability Index)
--   Automated testing with over 90% code coverage
+-   Automated testing with 90% code coverage
 
 ------------------------------------------------------------------------
 
@@ -36,24 +35,42 @@ educational decision-making processes.
     tc05/
     │
     ├── src/
-    │   ├── config.py
-    │   ├── train.py
-    │   ├── evaluate.py
-    │   ├── ml_pipeline.py
-    │   ├── feature_engineering.py
-    │   ├── preprocessing.py
-    │   ├── drift_monitor.py
+    │   ├── __init__.py              # Marks src as a Python package
+    │   ├── config.py                # Central configuration (paths, constants, target column)
+    │   ├── feature_engineering.py   # Feature construction logic
+    │   ├── preprocessing.py         # Data cleaning and preprocessing utilities
+    │   ├── ml_pipeline.py           # Feature engineering block used inside sklearn Pipeline
+    │   ├── train.py                 # Model training script and artifact generation
+    │   ├── evaluate.py              # Holdout evaluation and metrics generation
+    │   ├── drift_monitor.py         # PSI-based drift detection utilities
     │
     ├── app/
-    │   ├── main.py
-    │   ├── routes.py
+    │   ├── main.py                  # FastAPI application entrypoint
+    │   ├── routes.py                # API endpoints (predict, drift, metrics)
     │
     ├── tests/
-    ├── artifacts/
-    ├── requirements.txt
-    ├── pytest.ini
-    └── README.md
-
+    │   ├── conftest.py              # Shared fixtures for tests
+    │   ├── test_feature_engineering.py  # Unit tests for feature logic
+    │   ├── test_preprocessing.py        # Tests for preprocessing utilities
+    │   ├── test_ml_pipeline.py          # Tests for pipeline feature block
+    │   ├── test_pipeline_smoke.py       # End-to-end pipeline smoke test
+    │   ├── test_train.py                # Training execution test (artifact validation)
+    │   ├── test_evaluate.py             # Evaluation script test with mocked artifacts
+    │   ├── test_drift_monitor.py        # PSI drift calculation tests
+    │
+    ├── artifacts/                  # Saved models and evaluation outputs
+    │   ├── pipeline.joblib         # Serialized sklearn pipeline
+    │   ├── metrics.json            # Training metrics
+    │   ├── metrics_eval.json       # Evaluation metrics
+    │   ├── test.csv                # Holdout dataset used in evaluation
+    │
+    ├── pytest.ini                  # Pytest configuration
+    ├── requirements.txt            # Production dependencies
+    ├── requirements-dev.txt        # Development dependencies (testing, coverage)
+    ├── notebook.ipynb              # Exploratory analysis notebook
+    ├── .flake8                    
+    ├── .coverage                 
+    └── README.md                  
 ------------------------------------------------------------------------
 
 ## Machine Learning Pipeline
@@ -220,18 +237,3 @@ Test coverage includes:
 -   High code coverage
 
 ------------------------------------------------------------------------
-
-## Future Improvements
-
--   Docker containerization
--   Cloud deployment
--   CI/CD integration
--   Model versioning strategy
-
-------------------------------------------------------------------------
-
-## Author
-
-Guilherme Corby Moreira
-
-Machine Learning Engineering Project --- Tech Challenge 05
