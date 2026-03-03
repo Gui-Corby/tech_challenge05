@@ -9,6 +9,8 @@ from pydantic import BaseModel
 
 from src.config import MODEL_PATH
 
+from app.inference_logger import log_inference
+
 router = APIRouter(tags=["predict"])
 
 try:
@@ -81,6 +83,14 @@ def predict(req: PredictRequest):
 
         # Probabilidades (n_amostras x n_classes)
         probas = pipeline.predict_proba(df_raw)
+
+        # Salvando inferências
+        for i, row in df_raw.iterrows():
+            log_inference(
+                features=row.to_dict(),
+                prediction=preds[i],
+                proba=max(probas[i])
+            )
 
         # classes_ (ordem das colunas em probas)
         classes = pipeline.classes_.tolist()
