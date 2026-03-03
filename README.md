@@ -214,7 +214,7 @@ Run with coverage:
 
     pytest --cov=src --cov-report=term-missing
 
-Current coverage: above 90%
+Current coverage: 90%
 
 Test coverage includes:
 
