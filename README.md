@@ -239,14 +239,17 @@ This project can be executed in an isolated and reproducible environment using D
 ```bash
 git clone https://github.com/Gui-Corby/tech_challenge05
 cd tech_challenge05
+```
 
 ### 2. Build the Docker image
 ```bash
 docker build -t tc05-api .
+```
 
 ### 3. Run the container
 ```bash
 docker run --rm -p 8000:8000 tc05-api
+```
 
 ### 4. Access the API
 open in your browser: http://localhost:8000/docs
