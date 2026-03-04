@@ -198,8 +198,8 @@ Outputs:
 
 Interpretation thresholds:
 
--   PSI \< 0.1: No drift\
--   0.1 ≤ PSI \< 0.25: Moderate drift\
+-   PSI \< 0.1: No drift
+-   0.1 ≤ PSI \< 0.25: Moderate drift
 -   PSI ≥ 0.25: Significant drift
 
 ------------------------------------------------------------------------
@@ -253,6 +253,7 @@ docker run --rm -p 8000:8000 tc05-api
 
 ### 4. Access the API
 open in your browser: http://localhost:8000/docs
+
 The interactive Swagger documentation will be available for testing the endpoints.
 
 The Docker image includes:
