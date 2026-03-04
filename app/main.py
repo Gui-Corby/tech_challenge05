@@ -1,8 +1,11 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.predict import router as predict_router
+from app.routes import router as monitoring_router
 
 from app.monitoring.middleware import MetricsMiddleware
-from app.monitoring.routes import router as metrics_router
+
 
 app = FastAPI(
     title="Passos Mágicos API",
@@ -10,11 +13,18 @@ app = FastAPI(
 )
 
 app.add_middleware(MetricsMiddleware)
-app.include_router(metrics_router)
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
     return {"message": "API is running!"}
 
 app.include_router(predict_router)
+app.include_router(monitoring_router)
+
