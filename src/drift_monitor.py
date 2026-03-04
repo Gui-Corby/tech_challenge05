@@ -12,22 +12,29 @@ NUMERIC_FEATURES = [
     "Mat", "Por", "Ing", "Idade"]
 
 
-def calculate_psi(expected, actual, bins=10):
-    expected = np.asarray(expected)
-    actual = np.asarray(actual)
+def calculate_psi(expected, actual, bins=10, eps=1e-6):
+    expected = pd.to_numeric(expected, errors="coerce").to_numpy()
+    actual = pd.to_numeric(actual, errors="coerce").to_numpy()
 
-    # bins definidos pelo expected (baseline)
+    expected = expected[np.isfinite(expected)]
+    actual = actual[np.isfinite(actual)]
+
+    # se não tiver dados suficientes, retorna 0 (ou np.nan)
+    if expected.size == 0 or actual.size == 0:
+        return 0.0
+
     _, bin_edges = np.histogram(expected, bins=bins)
 
     expected_counts, _ = np.histogram(expected, bins=bin_edges)
     actual_counts, _ = np.histogram(actual, bins=bin_edges)
 
-    expected_perc = expected_counts / max(len(expected), 1)
-    actual_perc = actual_counts / max(len(actual), 1)
+    expected_perc = expected_counts / max(expected_counts.sum(), 1)
+    actual_perc = actual_counts / max(actual_counts.sum(), 1)
 
-    psi = np.sum((actual_perc - expected_perc) *
-                 np.log((actual_perc + 1e-6) / (expected_perc + 1e-6)))
+    expected_perc = np.clip(expected_perc, eps, None)
+    actual_perc = np.clip(actual_perc, eps, None)
 
+    psi = np.sum((expected_perc - actual_perc) * np.log(expected_perc / actual_perc))
     return float(psi)
 
 
@@ -46,15 +53,22 @@ def compute_drift():
 
     results = {}
 
-    for col in NUMERIC_FEATURES:
-        if col in baseline_df.columns and col in prod_df.columns:
-            psi = calculate_psi(
-                baseline_df[col].dropna(),
-                prod_df[col].dropna()
-            )
-            results[col] = psi
+    common_cols = sorted(set(baseline_df.columns) & set(prod_df.columns))
 
-    return {
-        "psi_per_feature": results,
-        "drift_flag": any(v > 0.2 for v in results.values())
-    }
+    numeric_cols = []
+    for col in common_cols:
+        # tenta converter para número (se virar tudo NaN, é categórica)
+        b = pd.to_numeric(baseline_df[col], errors="coerce")
+        p = pd.to_numeric(prod_df[col], errors="coerce")
+        if b.notna().any() and p.notna().any():
+            numeric_cols.append(col)
+
+    results = {}
+    for col in numeric_cols:
+        b = pd.to_numeric(baseline_df[col], errors="coerce").dropna()
+        p = pd.to_numeric(prod_df[col], errors="coerce").dropna()
+
+        psi = calculate_psi(b, p)
+        results[col] = float(psi)
+
+    return {"n_features": len(results), "psi_by_feature": results}
