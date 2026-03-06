@@ -209,6 +209,21 @@ The project provides two endpoints for drift monitoring:
 - `/drift`: returns PSI values in JSON format
 - `/drift-report`: returns an HTML dashboard for visual inspection of feature drift
 
+The dashboard may show high PSI values for some features.  
+This is expected in this project because the production dataset used for comparison may have a different distribution from the training dataset.
+
+The goal of this component is to demonstrate:
+
+- automated drift detection
+- PSI monitoring
+- observability for model behavior
+
+In real production systems, high PSI values would trigger:
+
+- retraining pipelines
+- alerting systems
+- deeper data investigation
+
 ------------------------------------------------------------------------
 
 ## Testing and Quality Assurance
