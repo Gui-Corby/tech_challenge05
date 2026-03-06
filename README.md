@@ -268,6 +268,12 @@ The Docker image includes:
 
 ------------------------------------------------------------------------
 
+## Deployment
+The API is deployed at: https://tech-challenge05.onrender.com/
+note: It may take some time to load
+
+------------------------------------------------------------------------
+
 ## Engineering Practices Applied
 
 -   Modular architecture
