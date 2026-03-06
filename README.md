@@ -1,3 +1,13 @@
+# Passos Mágicos – ML Engineering Pipeline
+
+![Python](https://img.shields.io/badge/python-3.13-blue)
+![FastAPI](https://img.shields.io/badge/framework-FastAPI-green)
+![Docker](https://img.shields.io/badge/container-Docker-blue)
+![Tests](https://img.shields.io/badge/tests-pytest-orange)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+![Deploy](https://img.shields.io/badge/deploy-Render-purple)
+
+Machine Learning Engineering project for predicting school dropout using the Passos Mágicos dataset.
 
 ## Overview
 
