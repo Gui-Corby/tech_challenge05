@@ -316,6 +316,6 @@ note: It may take some time to load
 -   Drift detection
 -   Automated testing
 -   High code coverage
-- Docker environmente
+- Docker environment
 
 ------------------------------------------------------------------------
