@@ -202,6 +202,13 @@ Interpretation thresholds:
 -   0.1 ≤ PSI \< 0.25: Moderate drift
 -   PSI ≥ 0.25: Significant drift
 
+### Drift Monitoring
+
+The project provides two endpoints for drift monitoring:
+
+- `/drift`: returns PSI values in JSON format
+- `/drift-report`: returns an HTML dashboard for visual inspection of feature drift
+
 ------------------------------------------------------------------------
 
 ## Testing and Quality Assurance
